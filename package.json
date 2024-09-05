@@ -1,0 +1,14 @@
+{
+  "name": "@kubernetix/types",
+  "version": "0.0.1",
+  "type": "module",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/kubernetix/types.git"
+  },
+  "files": [
+    "index.d.ts",
+    "README.md"
+  ],
+  "types": "index.d.ts"
+}

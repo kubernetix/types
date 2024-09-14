@@ -1,7 +1,6 @@
 {
   "name": "@kubernetix/types",
-  "version": "0.0.1",
-  "type": "module",
+  "version": "0.0.2",
   "repository": {
     "type": "git",
     "url": "https://github.com/kubernetix/types.git"

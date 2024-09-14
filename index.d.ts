@@ -1,60 +1,13 @@
 declare var React: any;
 
-
-/**
- * A cheat sheet noop jsx component that can be used for better documentation
- * 
- * @see {@link https://k8x.io/docs/components/documentation | The CheatSheet component}
- * 
- * @example 
- * Possible components:
- * 
- * ```tsx
- *  <Cluster />, <Namespace />, <Ingress /> 
- * ```
- */
-declare class Kubernetix {
-  props?: {}
-}
-
-interface InstallHooks {
-  beforeInstallation?: () => void
-  afterInstallation?: () => void
-  onInstallationError?: () => void
-}
-
-interface InstallHooks {}
-
-declare class Ingress {
-  props?: {
-    foo?: string;
-  } & InstallHooks;
-}
-
-declare class Namespace {
-  props?: {
-    onInstall?: () => void
-    foo?: string;
-  };
-}
-/**
- *  The cluster component can be used to configure a target cluster different that the default one. You can define multiple cluster
- * 
- * @example
- * Possible children:
- * ```tsx
- * <Namespace />
- * 
- * ```
- * @see {@link http://example.com/@internal | the @internal tag}
- */
-declare class Cluster { 
-  props?: {
-    foo?: string;
-  } & InstallHooks;
-}
-
 declare namespace k8x {
+  /**
+   *  The chart component can be used to configure a target cluster different that the default one. You can define multiple cluster
+   *
+   * @deprecated
+   * 
+   * @see {@link http://example.com/@internal | the @internal tag}
+   */
   type Chart = {
     /**
      * This is the name of the chart
@@ -85,6 +38,17 @@ declare namespace k8x {
     //children: IntrinsicElements["k8s"];
   };
 
+  /**
+   *  The cluster component can be used to configure a target cluster different that the default one. You can define multiple cluster
+   *
+   * @example
+   * Possible children:
+   * ```tsx
+   * <Namespace />
+   *
+   * ```
+   * @see {@link http://example.com/@internal | the @internal tag}
+   */
   type Cluster = {
     config?: string;
   };
@@ -93,8 +57,7 @@ declare namespace k8x {
     name?: string;
   };
 
-  type Ingress = {
-  };
+  type Ingress = {};
   type Deployment = {
     "config-path"?: string;
   };
@@ -124,10 +87,10 @@ declare namespace k8x {
   type Service = {
     kind?: "Service";
     apiVersion?: "v1";
-    children?: any
+    children?: any;
   };
   type Port = {
-    children?: any
+    children?: any;
     name?: string;
     protocol: "TCP" | "UDP";
     port: number;
@@ -137,7 +100,9 @@ declare namespace k8x {
 
 declare namespace JSX {
   interface ElementAttributesProperty {
-    props: {} // specify the property name to use
+    props: {}; // specify the property name to use
   }
-  type IntrinsicElements = never
+  type IntrinsicElements = {
+    chart: k8x.Chart;
+  };
 }

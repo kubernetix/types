@@ -1,4 +1,4 @@
-import { IoK8sApiNetworkingV1Ingress } from "./.gen/models/IoK8sApiNetworkingV1Ingress.ts";
+import { IoK8sApiNetworkingV1Ingress } from "./gen/models/IoK8sApiNetworkingV1Ingress.ts";
 
 declare var React: any;
 

@@ -4,7 +4,7 @@ declare namespace k8x {
   type Chart = {
     name: string
     namespace: string
-    components: (Ingress|Deployment)[],
+    components: (Ingress|Deployment|Service|null|undefined)[],
   }
 
 // Definition für einen Pod (Kubernetes 1.31, TypeScript 5)

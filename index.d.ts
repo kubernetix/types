@@ -1,16 +1,64 @@
 declare namespace k8x {
-  const $env: Record<string, any>;
-
-  type Chart = {
+  // Todo add better types for right side (string|number)
+  const $env: Record<string, string>;
+  const $chart: {
     name: string
-    namespace: string
-    components: (Ingress|Deployment|Service|null|undefined)[],
+    version: string
+    private: boolean
+    repository: {
+      type: string
+      url: string
+    },
+    files: string[]
+    types: string,
+    dependencies: Record<string, string>
+    chart: {
+      appVersion: string
+      kubeVersion: string
+      type: string
+      keywords: string[]
+      home: string
+      repository: string
+      maintainers: string[]
+      icon: string
+      deprecated: boolean
+      annotations: string[]
+    }
   }
 
-// Definition für einen Pod (Kubernetes 1.31, TypeScript 5)
+  type Chart = {
+    namespace?: Namespace;
+    components: (
+      | Namespace
+      | Ingress
+      | Deployment
+      | Service
+      | null
+      | undefined
+    )[];
+  };
+
+  // Definition für einen Pod (Kubernetes 1.31, TypeScript 5)
+
+  type Namespace = {
+    apiVersion: "v1";
+    kind: "Namespace";
+    metadata: Metadata;
+    spec?: NamespaceSpec;
+    status?: NamespaceStatus;
+  };
+
+  type NamespaceSpec = {
+    finalizers?: string[];
+  };
+
+  type NamespaceStatus = {
+    phase?: "Active" | "Terminating";
+  };
+
   type Pod = {
-    apiVersion: 'v1';
-    kind: 'Pod';
+    apiVersion: "v1";
+    kind: "Pod";
     metadata: Metadata;
     spec: PodSpec;
     status?: PodStatus;
@@ -37,7 +85,7 @@ declare namespace k8x {
 
   type PodSpec = {
     containers: Container[];
-    restartPolicy?: 'Always' | 'OnFailure' | 'Never';
+    restartPolicy?: "Always" | "OnFailure" | "Never";
     nodeName?: string;
     nodeSelector?: Record<string, string>;
     serviceAccountName?: string;
@@ -54,7 +102,7 @@ declare namespace k8x {
 
   type ContainerPort = {
     containerPort: number;
-    protocol?: 'TCP' | 'UDP' | 'SCTP';
+    protocol?: "TCP" | "UDP" | "SCTP";
   };
 
   type ResourceRequirements = {
@@ -88,10 +136,10 @@ declare namespace k8x {
     lastTransitionTime?: string;
   };
 
-// Definition für ein Deployment (Kubernetes 1.31, TypeScript 5)
+  // Definition für ein Deployment (Kubernetes 1.31, TypeScript 5)
   type Deployment = {
-    apiVersion: 'apps/v1';
-    kind: 'Deployment';
+    apiVersion: "apps/v1";
+    kind: "Deployment";
     metadata?: Metadata;
     spec?: DeploymentSpec;
     status?: DeploymentStatus;
@@ -112,7 +160,7 @@ declare namespace k8x {
   };
 
   type DeploymentStrategy = {
-    type: 'Recreate' | 'RollingUpdate';
+    type: "Recreate" | "RollingUpdate";
     rollingUpdate?: RollingUpdateDeployment;
   };
 
@@ -129,26 +177,26 @@ declare namespace k8x {
     availableReplicas?: number;
   };
 
-// Definition für einen Service (Kubernetes 1.31, TypeScript 5)
+  // Definition für einen Service (Kubernetes 1.31, TypeScript 5)
   type Service = {
-    apiVersion: 'v1';
-    kind: 'Service';
+    apiVersion: "v1";
+    kind: "Service";
     metadata: Metadata;
     spec: ServiceSpec;
     status?: ServiceStatus;
   };
 
   type ServiceSpec = {
-    type: 'ClusterIP' | 'NodePort' | 'LoadBalancer';
+    type: "ClusterIP" | "NodePort" | "LoadBalancer";
     ports: ServicePort[];
     selector?: Record<string, string>;
     clusterIP?: string;
     externalIPs?: string[];
-    sessionAffinity?: 'None' | 'ClientIP';
+    sessionAffinity?: "None" | "ClientIP";
   };
 
   type ServicePort = {
-    protocol?: 'TCP' | 'UDP' | 'SCTP';
+    protocol?: "TCP" | "UDP" | "SCTP";
     port: number;
     targetPort?: number | string;
     nodePort?: number;
@@ -160,29 +208,29 @@ declare namespace k8x {
     };
   };
 
-// Definition für eine ConfigMap (Kubernetes 1.31, TypeScript 5)
+  // Definition für eine ConfigMap (Kubernetes 1.31, TypeScript 5)
   type ConfigMap = {
-    apiVersion: 'v1';
-    kind: 'ConfigMap';
+    apiVersion: "v1";
+    kind: "ConfigMap";
     metadata: Metadata;
     data: Record<string, string>;
     binaryData?: Record<string, string>;
   };
 
-// Definition für ein Secret (Kubernetes 1.31, TypeScript 5)
+  // Definition für ein Secret (Kubernetes 1.31, TypeScript 5)
   type Secret = {
-    apiVersion: 'v1';
-    kind: 'Secret';
+    apiVersion: "v1";
+    kind: "Secret";
     metadata: Metadata;
     data: Record<string, string>;
     stringData?: Record<string, string>;
     type: string;
   };
 
-// Definition für einen Ingress (Kubernetes 1.31, TypeScript 5)
+  // Definition für einen Ingress (Kubernetes 1.31, TypeScript 5)
   type Ingress = {
-    apiVersion: 'networking.k8s.io/v1';
-    kind: 'Ingress';
+    apiVersion: "networking.k8s.io/v1";
+    kind: "Ingress";
     metadata?: Metadata;
     spec: IngressSpec;
     status?: IngressStatus;
@@ -202,7 +250,7 @@ declare namespace k8x {
 
   type IngressPath = {
     path: string;
-    pathType: 'Prefix' | 'Exact' | 'ImplementationSpecific';
+    pathType: "Prefix" | "Exact" | "ImplementationSpecific";
     backend: {
       service: {
         name: string;
@@ -224,24 +272,24 @@ declare namespace k8x {
     };
   };
 
-// Definition für ein PersistentVolumeClaim (PVC) (Kubernetes 1.31, TypeScript 5)
+  // Definition für ein PersistentVolumeClaim (PVC) (Kubernetes 1.31, TypeScript 5)
   type PersistentVolumeClaim = {
-    apiVersion: 'v1';
-    kind: 'PersistentVolumeClaim';
+    apiVersion: "v1";
+    kind: "PersistentVolumeClaim";
     metadata: Metadata;
     spec: PersistentVolumeClaimSpec;
     status?: PersistentVolumeClaimStatus;
   };
 
   type PersistentVolumeClaimSpec = {
-    accessModes: ('ReadWriteOnce' | 'ReadOnlyMany' | 'ReadWriteMany')[];
+    accessModes: ("ReadWriteOnce" | "ReadOnlyMany" | "ReadWriteMany")[];
     resources: {
       requests: {
         storage: string;
       };
     };
     storageClassName?: string;
-    volumeMode?: 'Filesystem' | 'Block';
+    volumeMode?: "Filesystem" | "Block";
   };
 
   type PersistentVolumeClaimStatus = {

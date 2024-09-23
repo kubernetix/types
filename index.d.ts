@@ -12,18 +12,15 @@ declare namespace k8x {
     files: string[]
     types: string,
     dependencies: Record<string, string>
-    chart: {
-      appVersion: string
-      kubeVersion: string
-      type: string
-      keywords: string[]
-      home: string
-      repository: string
-      maintainers: string[]
-      icon: string
-      deprecated: boolean
-      annotations: string[]
-    }
+    appVersion: string
+    kubeVersion: string
+    type: string
+    keywords: string[]
+    home: string
+    maintainers: string[]
+    icon: string
+    deprecated: boolean
+    annotations: string[]
   }
 
   type Chart = {

@@ -1,27 +1,63 @@
+// Todo add better types for right side (string|number)
+declare const $env: {
+  /** Parses `K8X_MY_TEST=abc` into abc */
+  get<T>(name: string): T;
+
+  /** Parses some env variables with the same prefix into a object
+   * @example
+   * 
+   * $env.get("INGRESS_CLASS_ANNOTATIONS")
+   * -----------
+   * K8X_INGRESS_CLASS_ANNOTATIONS_KEY_1=nginx.ingress.kubernetes.io/app-root
+   * K8X_INGRESS_CLASS_ANNOTATIONS_VALUE_1='/var/www/html'
+   * -----------
+   * K8X_INGRESS_CLASS_ANNOTATIONS_KEY_2=nginx.ingress.kubernetes.io/enable-cors
+   * K8X_INGRESS_CLASS_ANNOTATIONS_VALUE_2=true
+   * -----------
+   * {
+   *   "nginx.ingress.kubernetes.io/app-root": '/var/www/html',
+   *   "nginx.ingress.kubernetes.io/enable-cors": true
+   * }
+   */
+  getAsObject(prefix: string): k8x.Tuple;
+
+  /** Parses a env variables as list
+   * Consider these Variables:
+   * K8X_MY_TEST_1=a
+   * K8X_MY_TEST_2=b
+   * K8X_MY_TEST_3=c
+   * K8X_MY_TEST_4=d
+   * K8X_MY_TEST_5=e
+   * Will be parsed into
+   * ["a", "b", "c", "d", "e"]
+   */
+  getAsList<T>(prefix: string): T[];
+};
+
+declare const $chart: {
+  name: string;
+  version: string;
+  private: boolean;
+  repository: {
+    type: string;
+    url: string;
+  };
+  files: string[];
+  types: string;
+  dependencies: k8x.Tuple;
+  appVersion: string;
+  kubeVersion: string;
+  type: string;
+  keywords: string[];
+  home: string;
+  maintainers: string[];
+  icon: string;
+  deprecated: boolean;
+  annotations: string[];
+};
+
 declare namespace k8x {
-  // Todo add better types for right side (string|number)
-  const $env: Record<string, string>;
-  const $chart: {
-    name: string
-    version: string
-    private: boolean
-    repository: {
-      type: string
-      url: string
-    },
-    files: string[]
-    types: string,
-    dependencies: Record<string, string>
-    appVersion: string
-    kubeVersion: string
-    type: string
-    keywords: string[]
-    home: string
-    maintainers: string[]
-    icon: string
-    deprecated: boolean
-    annotations: string[]
-  }
+  type Tuple = Record<string, string | number | boolean>;
 
   type Chart = {
     namespace?: Namespace;
@@ -30,12 +66,33 @@ declare namespace k8x {
       | Ingress
       | Deployment
       | Service
+      | IngressClass
       | null
       | undefined
     )[];
   };
 
   // Definition für einen Pod (Kubernetes 1.31, TypeScript 5)
+
+  // Definition für eine IngressClass (Kubernetes 1.31, TypeScript 5)
+  type IngressClass = {
+    apiVersion: "networking.k8s.io/v1";
+    kind: "IngressClass";
+    metadata: Metadata;
+    spec: IngressClassSpec;
+  };
+
+  type IngressClassSpec = {
+    controller: string;
+    parameters?: IngressClassParameters;
+  };
+
+  type IngressClassParameters = {
+    apiGroup?: string;
+    kind: string;
+    name: string;
+    namespace?: string;
+  };
 
   type Namespace = {
     apiVersion: "v1";
@@ -64,8 +121,8 @@ declare namespace k8x {
   type Metadata = {
     name: string;
     namespace?: string;
-    labels?: Record<string, string>;
-    annotations?: Record<string, string>;
+    labels?: Record<string, string | boolean | number>;
+    annotations?: Record<string, string | boolean | number>;
     uid?: string;
     creationTimestamp?: string;
     ownerReferences?: OwnerReference[];
@@ -84,7 +141,7 @@ declare namespace k8x {
     containers: Container[];
     restartPolicy?: "Always" | "OnFailure" | "Never";
     nodeName?: string;
-    nodeSelector?: Record<string, string>;
+    nodeSelector?: Tuple;
     serviceAccountName?: string;
     automountServiceAccountToken?: boolean;
   };
@@ -103,8 +160,8 @@ declare namespace k8x {
   };
 
   type ResourceRequirements = {
-    limits?: Record<string, string>;
-    requests?: Record<string, string>;
+    limits?: Tuple;
+    requests?: Tuple;
   };
 
   type EnvVar = {
@@ -145,7 +202,7 @@ declare namespace k8x {
   type DeploymentSpec = {
     replicas?: number;
     selector: {
-      matchLabels: Record<string, string>;
+      matchLabels: Tuple;
     };
     template: PodTemplate;
     strategy?: DeploymentStrategy;
@@ -186,7 +243,7 @@ declare namespace k8x {
   type ServiceSpec = {
     type: "ClusterIP" | "NodePort" | "LoadBalancer";
     ports: ServicePort[];
-    selector?: Record<string, string>;
+    selector?: Tuple;
     clusterIP?: string;
     externalIPs?: string[];
     sessionAffinity?: "None" | "ClientIP";
@@ -210,8 +267,8 @@ declare namespace k8x {
     apiVersion: "v1";
     kind: "ConfigMap";
     metadata: Metadata;
-    data: Record<string, string>;
-    binaryData?: Record<string, string>;
+    data: Tuple;
+    binaryData?: Tuple;
   };
 
   // Definition für ein Secret (Kubernetes 1.31, TypeScript 5)
@@ -219,8 +276,8 @@ declare namespace k8x {
     apiVersion: "v1";
     kind: "Secret";
     metadata: Metadata;
-    data: Record<string, string>;
-    stringData?: Record<string, string>;
+    data: Tuple;
+    stringData?: Tuple;
     type: string;
   };
 
@@ -291,7 +348,7 @@ declare namespace k8x {
 
   type PersistentVolumeClaimStatus = {
     phase: string;
-    capacity?: Record<string, string>;
+    capacity?: Tuple;
     accessModes?: string[];
   };
 }
